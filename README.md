@@ -23,7 +23,7 @@ Takımımızın iş bölümünü ve görev durumlarını (To Do, In Progress, Do
 İlk sprintin sonunda ortaya çıkan, API ile haberleşen kullanıcı arayüzü ve Swagger test ortamı:
 
 > **Not:** *(Hazırladığımız index.html dosyasının tarayıcıdaki görüntüsünü ve Swagger API ekranını yan yana koyup ekran görüntüsü alarak `urun.png` adıyla buraya ekleyin)*
-![Sprint Board](images/board.png)
+![Uygulama Arayüzü ve Backend](image/urun.png)
 
 ### 5. Sprint Review (Sprint Değerlendirmesi)
 *   **Tamamlananlar:** FastAPI iskeleti kuruldu, Pydantic modelleri hazırlandı. Spam filtresi sisteme entegre edildi ve HTML/JS tabanlı arayüz başarılı bir şekilde sunucuya veri gönderebilir hale getirildi.
