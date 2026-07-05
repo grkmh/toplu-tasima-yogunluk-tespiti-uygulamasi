@@ -1,4 +1,39 @@
 # toplu-tasima-yogunluk-tespiti-uygulamasi
+
+## 📌 Proje Künyesi
+
+**Takım İsmi:** RotaTech Ekibi
+
+**Takım Rolleri:**
+*   **Product Owner:** Görkem Hacıoğlu
+*   **Scrum Master:** Hülya Cerit
+
+**Ürün İsmi:** RotaRadar
+
+**Ürün Açıklaması:**
+RotaRadar, kitle kaynaklı (crowdsourced) veri toplama modeliyle çalışan, toplu taşıma araçlarındaki (özellikle durağı olmayan dolmuş ve minibüs hatlarındaki) anlık yolcu yoğunluğunu tespit eden bir web uygulamasıdır. Yolcuların araç içinden yaptığı anonim bildirimleri analiz ederek, durakta bekleyen diğer kullanıcılar için gerçek zamanlı bir yoğunluk haritası sunmayı amaçlar.
+
+**Ürün Özellikleri:**
+*   **Hızlı Veri Girişi:** Yolcuların hareket halindeki bir araç içinde bile tek tıkla durum (Sakin, Yoğun, Çok Yoğun) bildirebilmesini sağlayan minimalist arayüz.
+*   **Gerçek Zamanlı Dinamik Analiz:** Sistemin güncel kalması için yalnızca son 15 dakika içinde girilen verilerin matematiksel ortalamasını alarak nihai bir yoğunluk skoru üretme.
+*   **Anti-Spam Koruması:** Asılsız veri akışını ve manipülasyonu engellemek amacıyla, aynı kullanıcının (cihazın) 5 dakika içinde birden fazla bildirim yapmasını engelleyen güvenlik algoritması.
+*   **Lokasyon Doğrulaması (Geliştirme Aşamasında):** Kullanıcıların yalnızca fiziksel olarak bulundukları koordinatlarla eşleşen hatlar için bildirim yapabilmesini sağlayan GPS entegrasyonu.
+
+**Hedef Kitle:**
+*   Günlük iş veya okul güzergahında dolmuş, minibüs ve otobüs gibi toplu taşıma araçlarını aktif olarak kullanan şehir içi yolcular.
+*   Zaman yönetimine önem veren ve dolu bir aracı beklemek yerine alternatif güzergahlar (veya farklı ulaşım yolları) planlamak isteyen bireyler.
+
+## 📋 Product Backlog (Ürün İş Listesi)
+*   ✅ Kullanıcıların yoğunluk durumunu saniyeler içinde seçebileceği mobil uyumlu web arayüzünün (UI) tasarlanması.
+*   ✅ FastAPI kullanılarak backend iskeletinin, Pydantic modellerinin ve API uç noktalarının (endpoints) oluşturulması.
+*   ✅ Sistemin tutarlılığı için Zaman Filtresi (Son 15 dk) ve Spam Filtresi (5 dk bekleme) algoritmalarının koda entegre edilmesi.
+*   ⏳ HTML5 Geolocation API kullanılarak kullanıcı cihazından anlık enlem/boylam verisinin alınması ve backend'e iletilmesi.
+*   ⏳ Toplanan verilerin sonucunun (hattın güncel durumunun) yolculara gösterileceği harita veya durum ekranının tasarlanması.
+*   ⏳ Kalıcı veri depolama ve mekansal (spatial) analizler için PostgreSQL/PostGIS veritabanı entegrasyonunun sağlanması.
+
+---
+
+
 ## 🏃‍♂️ Sprint 1 Raporu ve Çevik Yönetim (Agile/Scrum)
 
 Bu bölümde, takımımızın ilk sprint (koşu) döngüsündeki yönetim süreçleri ve ürün çıktıları belgelenmiştir. 
