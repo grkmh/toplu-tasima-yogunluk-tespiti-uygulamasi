@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <!-- Mobil cihazlarda düzgün görünmesi için hayati etiket -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dolmuş Yoğunluk Bildirimi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            background-color: #0056b3;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin: 15px 0;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-sakin { background-color: #28a745; }
+        .btn-yogun { background-color: #ffc107; color: #333; }
+        .btn-cok-yogun { background-color: #dc3545; }
+
+        #status-message {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h3>📍 Kadıköy - Pendik (Mavi)</h3>
+        <p>Şu an dolmuşun durumu nasıl?</p>
+    </div>
+
+    <!-- Yoğunluk Butonları -->
+    <button class="btn btn-sakin" onclick="sendReport('SAKIN')">Sakin (Oturacak Yer Var)</button>
+    <button class="btn btn-yogun" onclick="sendReport('YOGUN')">Yoğun (Ayakta Yolcu Var)</button>
+    <button class="btn btn-cok-yogun" onclick="sendReport('COK_YOGUN')">Çok Yoğun (Adım Atılmaz)</button>
+
+    <div id="status-message"></div>
+
+    <script>
+        // 1. Kullanıcıya anonim bir ID atama ve LocalStorage'a kaydetme
+        function getOrCreateUserId() {
+            let userId = localStorage.getItem('anon_user_id');
+            if (!userId) {
+                // Rastgele bir kimlik oluştur
+                userId = 'usr_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('anon_user_id', userId);
+            }
+            return userId;
+        }
+
+        // 2. Butona basıldığında API'ye veriyi gönderme
+        async function sendReport(densityStatus) {
+            const userId = getOrCreateUserId();
+            const messageDiv = document.getElementById('status-message');
+
+            messageDiv.innerText = "Gönderiliyor...";
+
+            // API'ye gönderilecek JSON verisi
+            const payload = {
+                user_id: userId,
+                route_code: "KADIKOY-PENDIK-MAVI",
+                density_status: densityStatus,
+                latitude: 40.9175,  // Şimdilik sabit, ileride GPS'ten alınacak
+                longitude: 29.2842
+            };
+
+            try {
+                // FastAPI sunucumuza istek atıyoruz
+                const response = await fetch('http://127.0.0.1:8000/api/v1/density-report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.status === 201) {
+                    messageDiv.style.color = "green";
+                    messageDiv.innerText = "Bildiriminiz başarıyla alındı! Teşekkürler.";
+                } else if (response.status === 429) {
+                    messageDiv.style.color = "red";
+                    messageDiv.innerText = "Spam Filtresi: Lütfen yeni bildirim için 5 dakika bekleyin.";
+                } else {
+                    messageDiv.style.color = "red";
+                    messageDiv.innerText = "Bir hata oluştu.";
+                }
+            } catch (error) {
+                messageDiv.style.color = "red";
+                messageDiv.innerText = "Sunucuya ulaşılamıyor. Lütfen API'nin çalıştığından emin olun.";
+            }
+        }
+    </script>
+</body>
+</html>
