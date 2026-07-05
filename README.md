@@ -1,6 +1,6 @@
 # toplu-tasima-yogunluk-tespiti-uygulamasi
 
-## 📌 Proje Künyesi
+## Proje Künyesi
 
 **Takım İsmi:** RotaTech Ekibi
 
@@ -38,21 +38,22 @@ RotaRadar, kitle kaynaklı (crowdsourced) veri toplama modeliyle çalışan, top
 
 Bu bölümde, takımımızın ilk sprint (koşu) döngüsündeki yönetim süreçleri ve ürün çıktıları belgelenmiştir. 
 
-### 1. Backlog Düzeni ve Story Seçimleri
+### Backlog Düzeni ve Story Seçimleri
 İlk sprint için odak noktamız MVP'nin (Minimum Viable Product) kalbi olan "Kullanıcı Giriş Katmanı (Data Ingestion)" olarak belirlenmiştir. Bu kapsamda seçilen User Story'ler şunlardır:
 *   **Story 1:** Kullanıcıların dolmuş içindeyken yoğunluk durumunu saniyeler içinde seçebileceği mobil uyumlu bir arayüz tasarlanması.
 *   **Story 2:** FastAPI ile kullanıcılardan gelen JSON verilerini karşılayacak backend uç noktalarının oluşturulması.
 *   **Story 3:** Sistemi manipülasyonlardan korumak için 5 dakikalık "Spam Filtresi" mantığının koda entegre edilmesi.
 
-### 2. Daily Scrum (Günlük Toplantılar)
-*   **İletişim:** Günlük planlamalar ve kod çakışmalarının önlenmesi takım içi iletişim kanalları (Discord/WhatsApp) üzerinden sağlanmıştır.
+### Daily Scrum (Günlük Toplantılar)
+*   **İletişim:** Planlamalar Slack üzerinden sağlanmıştır.
 *   **Çözülen Engeller:** Frontend ve Backend'in farklı portlarda çalışmasından kaynaklı CORS (Cross-Origin Resource Sharing) hataları gün içindeki değerlendirmelerle çözülmüş ve uçtan uca veri akışı sağlanmıştır.
 
-### 3. Sprint Board (Pano)
-Takımımızın iş bölümünü ve görev durumlarını (To Do, In Progress, Done) takip ettiği sprint panosunun güncel hali:
+### Sprint Board (Pano)
+Takımımızın iş bölümünü ve görev durumlarını (Idea, To Do, In Progress, Done) takip ettiği sprint panosunun güncel hali:
 
-> **Not:** *(Trello, Jira, GitHub Projects veya Notion üzerinde kullandığınız görev panosunun ekran görüntüsünü alıp projeye `board.png` olarak kaydedin ve buraya ekleyin)*
 ![Sprint Board Pano Görüntüsü](board.png)
+<img width="1904" height="849" alt="board2" src="https://github.com/user-attachments/assets/ab8aa4f4-f606-4e3a-9ccb-f9ab5b048064" />
+<img width="1881" height="842" alt="board1" src="https://github.com/user-attachments/assets/b7a48534-dc5e-4f30-b2ad-586feed9803e" />
 
 ### 4. Ürün Durumu (Mevcut Çalışan Sürüm)
 İlk sprintin sonunda ortaya çıkan, API ile haberleşen kullanıcı arayüzü ve Swagger test ortamı:
