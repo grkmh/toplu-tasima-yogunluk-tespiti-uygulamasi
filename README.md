@@ -69,8 +69,4 @@ Takımımızın iş bölümünü ve görev durumlarını (Idea, To Do, In Progre
 ### 6. Sprint Retrospective (Geçmişe Dönük Analiz)
 *   **İyi Gidenler:** Takım içi GitHub Git Flow sürecinin pürüzsüz işlemesi ve backend mantığının (Zaman/Spam filtreleri) planlanandan daha hızlı koda dökülmesi.
 *   **Geliştirilmesi Gerekenler:** Projeye başlarken IDE (Cursor/PyCharm) ve terminal entegrasyonlarında yaşanan vakit kayıplarını önlemek için ilerleyen aşamalarda ortam kurulumlarının daha hızlı stabilize edilmesi.
-
-*   d
-*   Daily scrum ss
-*   (image/IMG-20260706-WA0000.jpg)
 *   
