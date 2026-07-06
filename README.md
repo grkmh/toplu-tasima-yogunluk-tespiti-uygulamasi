@@ -1,5 +1,8 @@
 # toplu-tasima-yogunluk-tespiti-uygulamasi
-
+##Ekip Arkadaşları:
+  Görkem Hacıoğlu
+  Hülya Cerit
+  -Diğer arkadaşlarımıza ulaşamadık
 ## Proje Künyesi
 
 **Takım İsmi:** RotaTech Ekibi
