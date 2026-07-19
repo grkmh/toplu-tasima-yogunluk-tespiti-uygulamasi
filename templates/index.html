@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RotaRadar - Yolculuk Takip</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 { text-align: center; color: #2c3e50; }
+        label { font-weight: bold; margin-top: 10px; display: block; color: #34495e; }
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        button.bitir-btn { background-color: #e74c3c; }
+        button:hover { opacity: 0.9; }
+        .hidden { display: none; }
+        #mesajKutusu { margin-top: 15px; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; }
+        .basarili { background-color: #d4edda; color: #155724; }
+        .hatali { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="baslaEkrani">
+    <h2>Minibüs/Otobüs Takip</h2>
+
+    <label>Hat Kodu:</label>
+    <input type="text" id="hatKodu" placeholder="Örn: 522ST">
+
+    <label>Biniş Durağı:</label>
+    <input type="text" id="durakAdi" placeholder="Örn: Kadıköy">
+
+    <label>Şu Anki Yoğunluk (1-9):</label>
+    <select id="yogunlukSkoru">
+        <option value="2">Çok Rahat (Boş Koltuk Var)</option>
+        <option value="5">Orta (Ayakta Yolcu Var)</option>
+        <option value="8">Çok Yoğun (Adım Atacak Yer Yok)</option>
+        <option value="9">Aşırı Yoğun (Nefes Alınmıyor)</option>
+    </select>
+
+    <button onclick="yolculukBaslat()">Yolculuğa Başla</button>
+    <div id="mesajBasla" class="hidden"></div>
+</div>
+
+<div class="container hidden" id="bitirEkrani">
+    <h2>Yolculuğu Bitir</h2>
+
+    <label>İniş Durağı:</label>
+    <input type="text" id="inisDuragi" placeholder="Örn: Pendik">
+
+    <label>İnerkenki Yoğunluk (1-9):</label>
+    <select id="inisYogunlukSkoru">
+        <option value="2">Çok Rahat</option>
+        <option value="5">Orta</option>
+        <option value="8">Çok Yoğun</option>
+        <option value="9">Aşırı Yoğun</option>
+    </select>
+
+    <button class="bitir-btn" onclick="yolculukBitir()">Araçtan İndim (Bitir)</button>
+    <div id="mesajBitir" class="hidden"></div>
+</div>
+
+<script>
+    let kullaniciId = localStorage.getItem('rotaKullaniciId');
+    if (!kullaniciId) {
+        kullaniciId = 'user_' + Math.floor(Math.random() * 1000000);
+        localStorage.setItem('rotaKullaniciId', kullaniciId);
+    }
+
+    // Port 8001 olarak güncellendi
+    const apiBaseUrl = 'http://127.0.0.1:8001';
+
+    function mesajGoster(elementId, mesaj, tip) {
+        const el = document.getElementById(elementId);
+        el.className = tip === 'hata' ? 'hatali' : 'basarili';
+        el.innerText = mesaj;
+        el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 3000);
+    }
+
+    async function yolculukBaslat() {
+        const payload = {
+            kullanici_id: kullaniciId,
+            hat_kodu: document.getElementById('hatKodu').value,
+            durak_adi: document.getElementById('durakAdi').value,
+            yogunluk_skoru: parseInt(document.getElementById('yogunlukSkoru').value)
+        };
+
+        if(!payload.hat_kodu || !payload.durak_adi) {
+            mesajGoster('mesajBasla', 'Lütfen tüm alanları doldurun.', 'hata'); return;
+        }
+
+        const res = await fetch(`${apiBaseUrl}/api/yolculuk/basla`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if(res.ok) {
+            document.getElementById('baslaEkrani').classList.add('hidden');
+            document.getElementById('bitirEkrani').classList.remove('hidden');
+        } else {
+            mesajGoster('mesajBasla', data.hata || data.detail || 'Bir hata oluştu.', 'hata');
+        }
+    }
+
+    async function yolculukBitir() {
+        const payload = {
+            kullanici_id: kullaniciId,
+            durak_adi: document.getElementById('inisDuragi').value,
+            yogunluk_skoru: parseInt(document.getElementById('inisYogunlukSkoru').value)
+        };
+
+        if(!payload.durak_adi) {
+            mesajGoster('mesajBitir', 'Lütfen iniş durağını girin.', 'hata'); return;
+        }
+
+        const res = await fetch(`${apiBaseUrl}/api/yolculuk/bitir`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if(res.ok) {
+            alert('Yolculuğunuz başarıyla kaydedildi. Teşekkürler!');
+            document.getElementById('bitirEkrani').classList.add('hidden');
+            document.getElementById('baslaEkrani').classList.remove('hidden');
+            document.getElementById('inisDuragi').value = '';
+        } else {
+            mesajGoster('mesajBitir', data.hata || data.detail || 'Bir hata oluştu.', 'hata');
+        }
+    }
+</script>
+</body>
+</html>

@@ -3,6 +3,7 @@ from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
 import uuid
 
+
 Base = declarative_base()
 
 class Kullanici(Base):
@@ -58,3 +59,13 @@ class GunlukOzet(Base):
     aykiri_veri_sayisi = Column(Integer, nullable=False)
     
     analiz_tarihi = Column(DateTime, default=datetime.utcnow)
+
+class AktifYolculuk(Base):
+    __tablename__ = "aktif_yolculuklar"
+
+    yolculuk_id = Column(String, primary_key=True)
+    kullanici_id = Column(String, index=True)
+    hat_kodu = Column(String)
+    binis_duragi = Column(String)
+    baslangic_yogunluk_skoru = Column(Integer)
+    binis_zamani = Column(DateTime, default=datetime.utcnow)
