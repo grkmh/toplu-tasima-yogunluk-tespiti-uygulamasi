@@ -45,11 +45,12 @@ RotaRadar, kitle kaynaklı (crowdsourced) veri toplama modeliyle çalışan, top
 *   **Story 2:** FastAPI ile kullanıcılardan gelen JSON verilerini karşılayacak backend uç noktalarının oluşturulması.
 *   **Story 3:** Sistemi manipülasyonlardan korumak için 5 dakikalık "Spam Filtresi" mantığının koda entegre edilmesi.
 
-### Daily Scrum (Günlük Toplantılar)
-*   **İletişim:** Planlamalar Slack üzerinden sağlanmıştır.
-*   **Çözülen Engeller:** Frontend ve Backend'in farklı portlarda çalışmasından kaynaklı CORS (Cross-Origin Resource Sharing) hataları gün içindeki değerlendirmelerle çözülmüş ve veri akışı sağlanmıştır.
+##2 Daily Scrum (Günlük Toplantılar)
+<img width="738" height="1600" alt="image" src="https://github.com/user-attachments/assets/66433ce9-9b15-4564-95ba-4090c3d2564d" />  
 
-### Sprint Board (Pano)
+
+
+##3 Sprint Board (Pano)
 Takımımızın iş bölümünü ve görev durumlarını (Idea, To Do, In Progress, Done) takip ettiği sprint panosunun güncel hali:
 
 ![Sprint Board Pano Görüntüsü](board.png)
@@ -118,4 +119,5 @@ Ayrıca sahte veri girişini tamamen bitirmek için dinamik bir kullanıcı güv
 ### 6. Sprint Retrospective (Geçmişe Dönük Değerlendirme)
 Scrum Master eşliğinde ekibimizin süreçlerini iyileştirmek için yaptığı değerlendirme toplantısı. "Neleri iyi yaptık?", "Neleri geliştirebiliriz?" ve bir sonraki sprint için aldığımız aksiyon kararları:
 
-<img width="1918" height="907" alt="Ekran görüntüsü 2026-07-19 185711" src="https://github.com/user-attachments/assets/385c3b0b-06de-4ee9-9eef-7205673db03b" />
+<img width="1499" height="463" alt="Ekran görüntüsü 2026-07-19 190259" src="https://github.com/user-attachments/assets/9ecbaa9e-800e-4e1e-8e27-869e561b8301" />
+
