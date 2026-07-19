@@ -60,7 +60,8 @@ Takımımızın iş bölümünü ve görev durumlarını (Idea, To Do, In Progre
 ### 4. Ürün Durumu (Mevcut Çalışan Sürüm)
 İlk sprintin sonunda ortaya çıkan, API ile haberleşen kullanıcı arayüzü ve Swagger test ortamı:
 
-![Uygulama Arayüzü ve Backend](image/urun.png)
+<img width="1456" height="686" alt="Ekran görüntüsü 2026-07-19 190450" src="https://github.com/user-attachments/assets/35c4b227-9c65-46b3-809c-f61859414bb7" />
+
 
 ### 5. Sprint Review (Sprint Değerlendirmesi)
 *   **Tamamlananlar:** FastAPI iskeleti kuruldu, Pydantic modelleri hazırlandı. Spam filtresi eklendi ve HTML/JS tabanlı arayüz başarılı bir şekilde sunucuya veri gönderebilir hale getirildi.
