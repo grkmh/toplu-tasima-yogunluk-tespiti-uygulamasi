@@ -23,6 +23,30 @@ def yolculuk_baslat(veri, db: Session):
     if mevcut_yolculuk:
         return {"hata": "Zaten devam eden aktif bir yolculuğunuz var."}
 
+    # Aktif yolculuktan önce bağlı kullanıcıyı oluştur
+    kullanici = db.query(Kullanici).filter(
+        Kullanici.id == veri.kullanici_id
+    ).first()
+
+    if not kullanici:
+        kullanici = Kullanici(id=veri.kullanici_id)
+        db.add(kullanici)
+
+    # Aktif yolculuktan önce bağlı hattı oluştur
+    hat = db.query(Hat).filter(
+        Hat.hat_kodu == veri.hat_kodu
+    ).first()
+
+    if not hat:
+        hat = Hat(
+            hat_kodu=veri.hat_kodu,
+            aciklama=f"{veri.hat_kodu} Numaralı Hat"
+        )
+        db.add(hat)
+
+    # Kullanıcı ve hat kayıtlarını aktif yolculuktan önce veritabanına gönder
+    db.flush()
+
     # RAM yerine veritabanındaki aktif_yolculuklar tablosuna kaydediyoruz
     yeni_aktif = AktifYolculuk(
         yolculuk_id=yolculuk_id,
@@ -56,17 +80,6 @@ def yolculuk_bitir(veri, db: Session):
     bitis_skoru = veri.yogunluk_skoru
     temsili_yolculuk_ortalamasi = (baslangic_skoru + bitis_skoru) / 2
     hat_kodu = baslangic_verisi.hat_kodu
-
-    # Yabancı Anahtar (Foreign Key) Kontrolleri
-    kullanici_db = db.query(Kullanici).filter(Kullanici.id == kullanici_id).first()
-    if not kullanici_db:
-        yeni_kullanici = Kullanici(id=kullanici_id)
-        db.add(yeni_kullanici)
-
-    hat_db = db.query(Hat).filter(Hat.hat_kodu == hat_kodu).first()
-    if not hat_db:
-        yeni_hat = Hat(hat_kodu=hat_kodu, aciklama=f"{hat_kodu} Numaralı Hat")
-        db.add(yeni_hat)
 
     # Ana veritabanına kalıcı kayıt oluşturuluyor
     yeni_kayit = YolculukKaydi(

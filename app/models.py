@@ -64,8 +64,21 @@ class AktifYolculuk(Base):
     __tablename__ = "aktif_yolculuklar"
 
     yolculuk_id = Column(String, primary_key=True)
-    kullanici_id = Column(String, index=True)
-    hat_kodu = Column(String)
-    binis_duragi = Column(String)
-    baslangic_yogunluk_skoru = Column(Integer)
-    binis_zamani = Column(DateTime, default=datetime.utcnow)
+
+    kullanici_id = Column(
+        String,
+        ForeignKey("kullanicilar.id"),
+        unique=True,
+        nullable=False,
+        index=True
+    )
+
+    hat_kodu = Column(
+        String,
+        ForeignKey("hatlar.hat_kodu"),
+        nullable=False
+    )
+
+    binis_duragi = Column(String, nullable=False)
+    baslangic_yogunluk_skoru = Column(Integer, nullable=False)
+    binis_zamani = Column(DateTime, default=datetime.utcnow, nullable=False)
