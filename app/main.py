@@ -34,15 +34,23 @@ def ana_sayfa(request: Request):
     )
 
 # API ROTALARI
-@app.post("/api/yolculuk/basla")
+@app.post("/api/yolculuk/basla", status_code=201)
 def basla(veri: YolculukBaslangic, db: Session = Depends(get_db)):
-    return yolculuk_baslat(veri, db)
+    sonuc = yolculuk_baslat(veri, db)
+
+    if "hata" in sonuc:
+        raise HTTPException(
+            status_code=409,
+            detail=sonuc["hata"]
+        )
+
+    return sonuc
 
 @app.post("/api/yolculuk/bitir")
 def bitir(veri: YolculukBitis, db: Session = Depends(get_db)):
     sonuc = yolculuk_bitir(veri, db)
     if "hata" in sonuc:
-        raise HTTPException(status_code=400, detail=sonuc["hata"])
+        raise HTTPException(status_code=409, detail=sonuc["hata"])
     return sonuc
 
 @app.get("/api/yogunluk/sorgula")
