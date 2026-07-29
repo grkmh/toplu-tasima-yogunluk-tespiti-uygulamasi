@@ -1,6 +1,6 @@
 import os
 
-from sqlalchemy import create_engine , event
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 
 
@@ -9,7 +9,25 @@ SQLALCHEMY_DATABASE_URL = os.getenv(
     "sqlite:///./rotaradar.db"
 )
 
-engine_options = {}
+# Bazı servisler eski postgres:// biçiminde bağlantı adresi verebilir.
+if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
+    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace(
+        "postgres://",
+        "postgresql+psycopg://",
+        1
+    )
+
+# Standart PostgreSQL adresini Psycopg 3 sürücüsüne yönlendir.
+elif SQLALCHEMY_DATABASE_URL.startswith("postgresql://"):
+    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace(
+        "postgresql://",
+        "postgresql+psycopg://",
+        1
+    )
+
+engine_options = {
+    "pool_pre_ping": True
+}
 
 if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
     engine_options["connect_args"] = {
@@ -28,6 +46,7 @@ if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
+
 
 SessionLocal = sessionmaker(
     autocommit=False,
