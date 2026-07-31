@@ -44,7 +44,7 @@
         button.bitir-btn { background-color: #e74c3c; }
         button:hover { opacity: 0.9; }
         .hidden { display: none; }
-        #mesajKutusu { margin-top: 15px; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; }
+        #mesajBasla, #mesajBitir { margin-top: 15px; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; }
         .basarili { background-color: #d4edda; color: #155724; }
         .hatali { background-color: #f8d7da; color: #721c24; }
     </style>
@@ -55,7 +55,7 @@
     <h2>Minibüs/Otobüs Takip</h2>
 
     <label>Hat Kodu:</label>
-    <input type="text" id="hatKodu" placeholder="Örn: 522ST">
+    <input type="text" id="hatKodu" placeholder="Örn: 133GP">
 
     <label>Biniş Durağı:</label>
     <input type="text" id="durakAdi" placeholder="Örn: Kadıköy">
@@ -91,75 +91,163 @@
 </div>
 
 <script>
-    let kullaniciId = localStorage.getItem('rotaKullaniciId');
+    let kullaniciId = localStorage.getItem("rotaKullaniciId");
+
     if (!kullaniciId) {
-        kullaniciId = 'user_' + Math.floor(Math.random() * 1000000);
-        localStorage.setItem('rotaKullaniciId', kullaniciId);
+        kullaniciId = "user_" + crypto.randomUUID();
+        localStorage.setItem("rotaKullaniciId", kullaniciId);
     }
 
-    // Port 8001 olarak güncellendi
-    const apiBaseUrl = 'http://127.0.0.1:8001';
+    // Frontend ve API aynı uygulamadan sunulduğu için sabit adres gerekmiyor.
+    const apiBaseUrl = "";
 
     function mesajGoster(elementId, mesaj, tip) {
-        const el = document.getElementById(elementId);
-        el.className = tip === 'hata' ? 'hatali' : 'basarili';
-        el.innerText = mesaj;
-        el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 3000);
+        const element = document.getElementById(elementId);
+
+        element.className = tip === "hata" ? "hatali" : "basarili";
+        element.innerText = mesaj;
+        element.style.display = "block";
+
+        setTimeout(() => {
+            element.style.display = "none";
+        }, 3000);
     }
 
-    async function yolculukBaslat() {
-        const payload = {
-            kullanici_id: kullaniciId,
-            hat_kodu: document.getElementById('hatKodu').value,
-            durak_adi: document.getElementById('durakAdi').value,
-            yogunluk_skoru: parseInt(document.getElementById('yogunlukSkoru').value)
-        };
-
-        if(!payload.hat_kodu || !payload.durak_adi) {
-            mesajGoster('mesajBasla', 'Lütfen tüm alanları doldurun.', 'hata'); return;
-        }
-
-        const res = await fetch(`${apiBaseUrl}/api/yolculuk/basla`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+    async function apiIstegi(endpoint, payload) {
+        const response = await fetch(`${apiBaseUrl}${endpoint}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify(payload)
         });
 
-        const data = await res.json();
-        if(res.ok) {
-            document.getElementById('baslaEkrani').classList.add('hidden');
-            document.getElementById('bitirEkrani').classList.remove('hidden');
-        } else {
-            mesajGoster('mesajBasla', data.hata || data.detail || 'Bir hata oluştu.', 'hata');
+        let data;
+
+        try {
+            data = await response.json();
+        } catch {
+            data = {};
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                data.detail ||
+                data.hata ||
+                "İşlem gerçekleştirilemedi."
+            );
+        }
+
+        return data;
+    }
+
+    async function yolculukBaslat() {
+        const hatKodu = document
+            .getElementById("hatKodu")
+            .value
+            .trim();
+
+        const durakAdi = document
+            .getElementById("durakAdi")
+            .value
+            .trim();
+
+        if (!hatKodu || !durakAdi) {
+            mesajGoster(
+                "mesajBasla",
+                "Lütfen tüm alanları doldurun.",
+                "hata"
+            );
+            return;
+        }
+
+        const payload = {
+            kullanici_id: kullaniciId,
+            hat_kodu: hatKodu,
+            durak_adi: durakAdi,
+            yogunluk_skoru: Number(
+                document.getElementById("yogunlukSkoru").value
+            )
+        };
+
+        try {
+            await apiIstegi(
+                "/api/yolculuk/basla",
+                payload
+            );
+
+            document
+                .getElementById("baslaEkrani")
+                .classList
+                .add("hidden");
+
+            document
+                .getElementById("bitirEkrani")
+                .classList
+                .remove("hidden");
+
+        } catch (error) {
+            mesajGoster(
+                "mesajBasla",
+                error.message,
+                "hata"
+            );
         }
     }
 
     async function yolculukBitir() {
-        const payload = {
-            kullanici_id: kullaniciId,
-            durak_adi: document.getElementById('inisDuragi').value,
-            yogunluk_skoru: parseInt(document.getElementById('inisYogunlukSkoru').value)
-        };
+        const inisDuragi = document
+            .getElementById("inisDuragi")
+            .value
+            .trim();
 
-        if(!payload.durak_adi) {
-            mesajGoster('mesajBitir', 'Lütfen iniş durağını girin.', 'hata'); return;
+        if (!inisDuragi) {
+            mesajGoster(
+                "mesajBitir",
+                "Lütfen iniş durağını girin.",
+                "hata"
+            );
+            return;
         }
 
-        const res = await fetch(`${apiBaseUrl}/api/yolculuk/bitir`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        const payload = {
+            kullanici_id: kullaniciId,
+            durak_adi: inisDuragi,
+            yogunluk_skoru: Number(
+                document.getElementById("inisYogunlukSkoru").value
+            )
+        };
 
-        const data = await res.json();
-        if(res.ok) {
-            alert('Yolculuğunuz başarıyla kaydedildi. Teşekkürler!');
-            document.getElementById('bitirEkrani').classList.add('hidden');
-            document.getElementById('baslaEkrani').classList.remove('hidden');
-            document.getElementById('inisDuragi').value = '';
-        } else {
-            mesajGoster('mesajBitir', data.hata || data.detail || 'Bir hata oluştu.', 'hata');
+        try {
+            await apiIstegi(
+                "/api/yolculuk/bitir",
+                payload
+            );
+
+            document
+                .getElementById("bitirEkrani")
+                .classList
+                .add("hidden");
+
+            document
+                .getElementById("baslaEkrani")
+                .classList
+                .remove("hidden");
+
+            document.getElementById("inisDuragi").value = "";
+
+            mesajGoster(
+                "mesajBasla",
+                "Yolculuğunuz başarıyla kaydedildi.",
+                "basarili"
+            );
+
+        } catch (error) {
+            mesajGoster(
+                "mesajBitir",
+                error.message,
+                "hata"
+            );
         }
     }
 </script>

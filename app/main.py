@@ -1,5 +1,4 @@
 from fastapi import FastAPI, HTTPException, Depends, Request
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
@@ -16,14 +15,6 @@ app = FastAPI(title="Transit Yoğunluk Takip API")
 
 # Şablonlar için dizin yolu
 templates = Jinja2Templates(directory="templates")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # ARAYÜZ ROTASI
 @app.get("/")
