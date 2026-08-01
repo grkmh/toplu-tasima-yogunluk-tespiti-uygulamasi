@@ -3,186 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RotaRadar - Yolculuk Takip</title>
+    <title>RotaRadar</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        h2 { text-align: center; color: #2c3e50; }
-        label { font-weight: bold; margin-top: 10px; display: block; color: #34495e; }
-        input, select, button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 5px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        button {
-            background-color: #27ae60;
-            color: white;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: background 0.3s;
-        }
-        button.bitir-btn { background-color: #e74c3c; }
-        button:hover { opacity: 0.9; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: system-ui, sans-serif; background: #f3f5f8; color: #17202a; }
+        header { background: #173b57; color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; }
+        header h1 { margin: 0; font-size: 22px; }
+        header button { width: auto; margin: 0; padding: 8px 14px; background: #fff; color: #173b57; }
+        main { width: min(1050px, 94%); margin: 24px auto; display: grid; grid-template-columns: 360px 1fr; gap: 22px; align-items: start; }
+        .card { background: white; padding: 20px; border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,.07); margin-bottom: 20px; }
+        h2 { margin-top: 0; font-size: 20px; }
+        label { display: block; font-weight: 650; margin-top: 12px; }
+        input, select, textarea, button { width: 100%; padding: 11px; border: 1px solid #cdd4dc; border-radius: 8px; margin-top: 6px; font: inherit; }
+        textarea { resize: vertical; min-height: 80px; }
+        button { border: 0; background: #16835f; color: white; font-weight: 700; cursor: pointer; margin-top: 16px; }
+        button.danger { background: #c64545; }
         .hidden { display: none; }
-        #mesajKutusu { margin-top: 15px; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; }
-        .basarili { background-color: #d4edda; color: #155724; }
-        .hatali { background-color: #f8d7da; color: #721c24; }
+        .mesaj { padding: 10px; border-radius: 8px; margin-top: 12px; }
+        .basarili { background: #def5e8; color: #12623f; }
+        .hatali { background: #fde4e4; color: #8b2020; }
+        .paylasim { padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid #e6e9ed; }
+        .paylasim:last-child { border: 0; margin-bottom: 0; }
+        .paylasim img { width: 100%; max-height: 480px; object-fit: cover; border-radius: 10px; background: #eee; }
+        .meta { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 9px; color: #52616d; font-size: 14px; }
+        .meta strong { color: #17202a; }
+        .aciklama { white-space: pre-wrap; }
+        .bos { color: #667; text-align: center; padding: 28px 0; }
+        @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
+<header>
+    <div><h1>RotaRadar</h1><small id="kullaniciAdi"></small></div>
+    <button onclick="cikisYap()">Çıkış yap</button>
+</header>
 
-<div class="container" id="baslaEkrani">
-    <h2>Minibüs/Otobüs Takip</h2>
+<main>
+    <section>
+        <div class="card" id="baslaEkrani">
+            <h2>Yolculuğa başla</h2>
+            <label for="hatKodu">Hat kodu</label>
+            <input id="hatKodu" maxlength="20" placeholder="Örn: 522ST">
+            <label for="durakAdi">Biniş durağı</label>
+            <input id="durakAdi" maxlength="100" placeholder="Örn: Kadıköy">
+            <label for="yogunlukSkoru">Yoğunluk</label>
+            <select id="yogunlukSkoru"><option value="2">Rahat</option><option value="5">Orta</option><option value="8">Çok yoğun</option><option value="9">Aşırı yoğun</option></select>
+            <button onclick="yolculukBaslat()">Yolculuğa başla</button>
+            <div id="mesajBasla" class="mesaj hidden"></div>
+        </div>
 
-    <label>Hat Kodu:</label>
-    <input type="text" id="hatKodu" placeholder="Örn: 522ST">
+        <div class="card hidden" id="bitirEkrani">
+            <h2>Aktif yolculuk</h2>
+            <p id="aktifYolculuk"></p>
+            <label for="inisDuragi">İniş durağı</label>
+            <input id="inisDuragi" maxlength="100" placeholder="Örn: Pendik">
+            <label for="inisYogunlukSkoru">İnerken yoğunluk</label>
+            <select id="inisYogunlukSkoru"><option value="2">Rahat</option><option value="5">Orta</option><option value="8">Çok yoğun</option><option value="9">Aşırı yoğun</option></select>
+            <button class="danger" onclick="yolculukBitir()">Yolculuğu bitir</button>
+            <div id="mesajBitir" class="mesaj hidden"></div>
+        </div>
 
-    <label>Biniş Durağı:</label>
-    <input type="text" id="durakAdi" placeholder="Örn: Kadıköy">
+        <div class="card">
+            <h2>Fotoğraf paylaş</h2>
+            <form id="paylasimFormu">
+                <label for="paylasimHat">Hat kodu</label>
+                <input id="paylasimHat" name="hat_kodu" maxlength="20" required placeholder="Örn: 522ST">
+                <label for="aciklama">Açıklama</label>
+                <textarea id="aciklama" name="aciklama" maxlength="280" placeholder="Araç ve yolculuk hakkında kısa bilgi"></textarea>
+                <label for="fotograf">Fotoğraf (JPG, PNG veya WebP; en fazla 5 MB)</label>
+                <input id="fotograf" name="fotograf" type="file" accept="image/jpeg,image/png,image/webp" required>
+                <button type="submit">Paylaş</button>
+                <div id="mesajPaylasim" class="mesaj hidden"></div>
+            </form>
+        </div>
+    </section>
 
-    <label>Şu Anki Yoğunluk (1-9):</label>
-    <select id="yogunlukSkoru">
-        <option value="2">Çok Rahat (Boş Koltuk Var)</option>
-        <option value="5">Orta (Ayakta Yolcu Var)</option>
-        <option value="8">Çok Yoğun (Adım Atacak Yer Yok)</option>
-        <option value="9">Aşırı Yoğun (Nefes Alınmıyor)</option>
-    </select>
-
-    <button onclick="yolculukBaslat()">Yolculuğa Başla</button>
-    <div id="mesajBasla" class="hidden"></div>
-</div>
-
-<div class="container hidden" id="bitirEkrani">
-    <h2>Yolculuğu Bitir</h2>
-
-    <label>İniş Durağı:</label>
-    <input type="text" id="inisDuragi" placeholder="Örn: Pendik">
-
-    <label>İnerkenki Yoğunluk (1-9):</label>
-    <select id="inisYogunlukSkoru">
-        <option value="2">Çok Rahat</option>
-        <option value="5">Orta</option>
-        <option value="8">Çok Yoğun</option>
-        <option value="9">Aşırı Yoğun</option>
-    </select>
-
-    <button class="bitir-btn" onclick="yolculukBitir()">Araçtan İndim (Bitir)</button>
-    <div id="mesajBitir" class="hidden"></div>
-</div>
+    <section class="card">
+        <h2>Son paylaşımlar</h2>
+        <div id="paylasimlar"><p class="bos">Yükleniyor...</p></div>
+    </section>
+</main>
 
 <script>
-    // Görkem'in eklediği güvenli UUID mantığı
-    let kullaniciId = localStorage.getItem("rotaKullaniciId");
-    if (!kullaniciId) {
-        kullaniciId = "user_" + crypto.randomUUID();
-        localStorage.setItem("rotaKullaniciId", kullaniciId);
+    const token = localStorage.getItem("rotaToken");
+    if (!token) window.location.replace("/");
+
+    function mesajGoster(id, mesaj, hata = false) {
+        const kutu = document.getElementById(id);
+        kutu.textContent = mesaj;
+        kutu.className = `mesaj ${hata ? "hatali" : "basarili"}`;
     }
 
-    // Sabit adres kaldırıldı, doğrudan uygulamanın çalıştığı yere istek atılacak
-    const apiBaseUrl = "";
-
-    function mesajGoster(elementId, mesaj, tip) {
-        const element = document.getElementById(elementId);
-        element.className = tip === "hata" ? "hatali" : "basarili";
-        element.innerText = mesaj;
-        element.style.display = "block";
-        setTimeout(() => {
-            element.style.display = "none";
-        }, 3000);
+    function cikisYap() {
+        localStorage.removeItem("rotaToken");
+        localStorage.removeItem("rotaKullaniciAdi");
+        window.location.replace("/");
     }
 
-    // Görkem'in eklediği ortak istek fonksiyonu (DRY Prensibi)
-    async function apiIstegi(endpoint, payload) {
-        const response = await fetch(`${apiBaseUrl}${endpoint}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-        });
-
-        let data;
-        try {
-            data = await response.json();
-        } catch {
-            data = {};
-        }
-
-        if (!response.ok) {
-            throw new Error(data.detail || data.hata || "İşlem gerçekleştirilemedi.");
-        }
+    async function api(endpoint, ayarlar = {}) {
+        const headers = new Headers(ayarlar.headers || {});
+        headers.set("Authorization", `Bearer ${token}`);
+        if (ayarlar.body && !(ayarlar.body instanceof FormData)) headers.set("Content-Type", "application/json");
+        const response = await fetch(endpoint, { ...ayarlar, headers });
+        const data = await response.json().catch(() => ({}));
+        if (response.status === 401) { cikisYap(); throw new Error("Oturum süresi doldu."); }
+        if (!response.ok) throw new Error(data.detail || "İşlem gerçekleştirilemedi.");
         return data;
     }
 
     async function yolculukBaslat() {
-        const hatKodu = document.getElementById("hatKodu").value.trim();
-        const durakAdi = document.getElementById("durakAdi").value.trim();
-
-        if (!hatKodu || !durakAdi) {
-            mesajGoster("mesajBasla", "Lütfen tüm alanları doldurun.", "hata");
-            return;
-        }
-
         const payload = {
-            kullanici_id: kullaniciId,
-            hat_kodu: hatKodu,
-            durak_adi: durakAdi,
+            hat_kodu: document.getElementById("hatKodu").value.trim(),
+            durak_adi: document.getElementById("durakAdi").value.trim(),
             yogunluk_skoru: Number(document.getElementById("yogunlukSkoru").value)
         };
-
-        try {
-            await apiIstegi("/api/yolculuk/basla", payload);
-            document.getElementById("baslaEkrani").classList.add("hidden");
-            document.getElementById("bitirEkrani").classList.remove("hidden");
-        } catch (error) {
-            mesajGoster("mesajBasla", error.message, "hata");
-        }
+        if (!payload.hat_kodu || !payload.durak_adi) return mesajGoster("mesajBasla", "Tüm alanları doldurun.", true);
+        try { await api("/api/yolculuk/basla", { method: "POST", body: JSON.stringify(payload) }); await aktifYolculuguYukle(); }
+        catch (error) { mesajGoster("mesajBasla", error.message, true); }
     }
 
     async function yolculukBitir() {
-        const inisDuragi = document.getElementById("inisDuragi").value.trim();
-
-        if (!inisDuragi) {
-            mesajGoster("mesajBitir", "Lütfen iniş durağını girin.", "hata");
-            return;
-        }
-
-        const payload = {
-            kullanici_id: kullaniciId,
-            durak_adi: inisDuragi,
-            yogunluk_skoru: Number(document.getElementById("inisYogunlukSkoru").value)
-        };
-
+        const durak = document.getElementById("inisDuragi").value.trim();
+        if (!durak) return mesajGoster("mesajBitir", "İniş durağını girin.", true);
         try {
-            await apiIstegi("/api/yolculuk/bitir", payload);
-            document.getElementById("bitirEkrani").classList.add("hidden");
-            document.getElementById("baslaEkrani").classList.remove("hidden");
+            await api("/api/yolculuk/bitir", { method: "POST", body: JSON.stringify({ durak_adi: durak, yogunluk_skoru: Number(document.getElementById("inisYogunlukSkoru").value) }) });
             document.getElementById("inisDuragi").value = "";
-            mesajGoster("mesajBasla", "Yolculuğunuz başarıyla kaydedildi.", "basarili");
-        } catch (error) {
-            mesajGoster("mesajBitir", error.message, "hata");
-        }
+            await aktifYolculuguYukle();
+            mesajGoster("mesajBasla", "Yolculuk kaydedildi.");
+        } catch (error) { mesajGoster("mesajBitir", error.message, true); }
     }
+
+    async function aktifYolculuguYukle() {
+        const durum = await api("/api/yolculuk/aktif");
+        document.getElementById("baslaEkrani").classList.toggle("hidden", durum.aktif);
+        document.getElementById("bitirEkrani").classList.toggle("hidden", !durum.aktif);
+        if (durum.aktif) document.getElementById("aktifYolculuk").textContent = `${durum.hat_kodu} hattı - ${durum.binis_duragi}`;
+    }
+
+    function guvenliMetin(metin) {
+        const span = document.createElement("span");
+        span.textContent = metin || "";
+        return span.innerHTML;
+    }
+
+    async function paylasimlariYukle() {
+        const paylasimlar = await api("/api/paylasimlar");
+        const alan = document.getElementById("paylasimlar");
+        if (!paylasimlar.length) { alan.innerHTML = '<p class="bos">Henüz paylaşım yok. İlk fotoğrafı sen paylaş.</p>'; return; }
+        alan.innerHTML = paylasimlar.map(p => `<article class="paylasim"><div class="meta"><span><strong>@${guvenliMetin(p.kullanici_adi)}</strong> · ${guvenliMetin(p.hat_kodu)}</span><time>${new Date(p.olusturulma_zamani).toLocaleString("tr-TR")}</time></div><img src="${encodeURI(p.fotograf_url)}" alt="${guvenliMetin(p.hat_kodu)} hattı paylaşımı" loading="lazy"><p class="aciklama">${guvenliMetin(p.aciklama)}</p></article>`).join("");
+    }
+
+    document.getElementById("paylasimFormu").addEventListener("submit", async event => {
+        event.preventDefault();
+        const dosya = document.getElementById("fotograf").files[0];
+        if (dosya && dosya.size > 5 * 1024 * 1024) return mesajGoster("mesajPaylasim", "Fotoğraf 5 MB'dan küçük olmalı.", true);
+        try {
+            await api("/api/paylasim", { method: "POST", body: new FormData(event.target) });
+            event.target.reset();
+            mesajGoster("mesajPaylasim", "Fotoğraf paylaşıldı.");
+            await paylasimlariYukle();
+        } catch (error) { mesajGoster("mesajPaylasim", error.message, true); }
+    });
+
+    (async () => {
+        try {
+            const ben = await api("/api/auth/ben");
+            document.getElementById("kullaniciAdi").textContent = `@${ben.kullanici_adi}`;
+            await Promise.all([aktifYolculuguYukle(), paylasimlariYukle()]);
+        } catch (error) { if (token) alert(error.message); }
+    })();
 </script>
 </body>
 </html>
