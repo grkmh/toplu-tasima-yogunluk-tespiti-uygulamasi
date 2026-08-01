@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Integer, Float, DateTime, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 
@@ -9,11 +9,11 @@ Base = declarative_base()
 class Kullanici(Base):
     __tablename__ = "kullanicilar"
 
-    id = Column(String, primary_key=True, index=True)
-    guven_skoru = Column(Float, default=1.0)
-    kayit_tarihi = Column(DateTime, default=datetime.utcnow)
-
-    yolculuklar = relationship("YolculukKaydi", back_populates="kullanici")
+    id = Column(Integer, primary_key=True, index=True)
+    kullanici_adi = Column(String(50), unique=True, index=True, nullable=False)
+    parola_hash = Column(String(255), nullable=False) # Parolalar artık düz metin olarak tutulmayacak
+    guven_skoru = Column(Integer, default=100)        # Başlangıçta herkese 100 puan veriyoruz
+    kayit_tarihi = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 class Hat(Base):
     __tablename__ = "hatlar"

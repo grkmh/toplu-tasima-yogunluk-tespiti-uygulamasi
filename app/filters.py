@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 import uuid
 from sqlalchemy.orm import Session
 # Yeni oluşturduğumuz AktifYolculuk modelini de dahil ediyoruz
@@ -15,7 +15,7 @@ def ortalamayi_etiketle(skor):
 
 
 def yolculuk_baslat(veri, db: Session):
-    su_anki_zaman = datetime.now()
+    su_anki_zaman = datetime.now(timezone.utc)
     yolculuk_id = str(uuid.uuid4())
 
     # Kullanıcının halihazırda devam eden bir yolculuğu var mı kontrolü
@@ -40,7 +40,7 @@ def yolculuk_baslat(veri, db: Session):
 
 
 def yolculuk_bitir(veri, db: Session):
-    su_anki_zaman = datetime.now()
+    su_anki_zaman = datetime.now(timezone.utc)
     kullanici_id = veri.kullanici_id
 
     # RAM'den değil, veritabanından başlangıç verisini çekiyoruz
@@ -49,7 +49,12 @@ def yolculuk_bitir(veri, db: Session):
     if not baslangic_verisi:
         return {"hata": "Aktif bir yolculuğunuz bulunmuyor."}
 
-    gecen_sure = su_anki_zaman - baslangic_verisi.binis_zamani
+    # Veritabanından gelen saat 'naive' ise ona UTC bilgisini ekliyoruz
+    binis = baslangic_verisi.binis_zamani
+    if binis.tzinfo is None:
+        binis = binis.replace(tzinfo=timezone.utc)
+
+    gecen_sure = su_anki_zaman - binis
     dakika_farki = round(gecen_sure.total_seconds() / 60)
 
     baslangic_skoru = baslangic_verisi.baslangic_yogunluk_skoru
@@ -96,7 +101,7 @@ def yolculuk_bitir(veri, db: Session):
 
 
 def rota_yogunlugu_sorgula(hat_kodu: str, binis_duragi: str, inis_duragi: str, pencere_dk: int, db: Session):
-    su_anki_zaman = datetime.now()
+    su_anki_zaman = datetime.now(timezone.utc)
     zaman_siniri = su_anki_zaman - timedelta(minutes=pencere_dk)
 
     kayitlar = db.query(YolculukKaydi).filter(

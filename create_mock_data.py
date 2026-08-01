@@ -1,5 +1,5 @@
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 import uuid
 from app.database import SessionLocal
 from app.models import YolculukKaydi, Kullanici, Hat
@@ -18,7 +18,7 @@ def create_mock_data():
             db.add(Kullanici(id=k_id))
     db.commit()
 
-    su_an = datetime.now()
+    su_an = datetime.now(timezone.utc)
     
     # 50 Adet Normal Veri (3-5 arası puanlar)
     for _ in range(50):

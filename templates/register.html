@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Kayıt Ol - Transit Yoğunluk</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f9; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 320px; text-align: center; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .bottom-links { margin-top: 15px; font-size: 14px; }
+        .bottom-links a { color: #007bff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Kayıt Ol</h2>
+        <form id="registerForm">
+            <input type="text" id="isim" placeholder="İsim" required>
+            <input type="text" id="soyisim" placeholder="Soyisim" required>
+            <input type="email" id="email" placeholder="E-posta Adresi" required>
+            <input type="password" id="password" placeholder="Şifre (En az 6 karakter)" minlength="6" required>
+            <button type="submit">Kayıt Ol</button>
+        </form>
+        <div class="bottom-links">
+            <a href="/">Zaten hesabın var mı? Giriş Yap</a>
+        </div>
+    </div>
+    <script src="/static/auth.js"></script>
+</body>
+</html>
