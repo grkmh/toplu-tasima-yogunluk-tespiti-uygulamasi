@@ -12,6 +12,13 @@
         header button { width: auto; margin: 0; padding: 8px 14px; background: #fff; color: #173b57; }
         main { width: min(1050px, 94%); margin: 24px auto; display: grid; grid-template-columns: 360px 1fr; gap: 22px; align-items: start; }
         .card { background: white; padding: 20px; border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,.07); margin-bottom: 20px; }
+        .istatistikler { grid-column: 1 / -1; }
+        .istatistik-aciklama { color: #5c6873; margin-top: -8px; }
+        .bar-satiri { display: grid; grid-template-columns: 90px 1fr 145px; gap: 12px; align-items: center; margin-top: 14px; }
+        .bar-hat { font-weight: 750; overflow-wrap: anywhere; }
+        .bar-zemin { height: 28px; background: #edf0f2; border-radius: 7px; overflow: hidden; }
+        .bar-dolgu { height: 100%; min-width: 3px; border-radius: 7px; transition: width .35s ease; }
+        .bar-deger { color: #45515c; font-size: 14px; text-align: right; }
         h2 { margin-top: 0; font-size: 20px; }
         label { display: block; font-weight: 650; margin-top: 12px; }
         input, select, textarea, button { width: 100%; padding: 11px; border: 1px solid #cdd4dc; border-radius: 8px; margin-top: 6px; font: inherit; }
@@ -29,7 +36,11 @@
         .meta strong { color: #17202a; }
         .aciklama { white-space: pre-wrap; }
         .bos { color: #667; text-align: center; padding: 28px 0; }
-        @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+        @media (max-width: 760px) {
+            main { grid-template-columns: 1fr; }
+            .bar-satiri { grid-template-columns: 65px 1fr; }
+            .bar-deger { grid-column: 2; text-align: left; }
+        }
     </style>
 </head>
 <body>
@@ -39,6 +50,12 @@
 </header>
 
 <main>
+    <section class="card istatistikler">
+        <h2>Hatların ortalama yoğunluğu</h2>
+        <p class="istatistik-aciklama">Tamamlanmış tüm yolculukların biniş ve iniş yoğunluğu ortalamasına göre hesaplanır.</p>
+        <div id="yogunlukGrafigi"><p class="bos">Yükleniyor...</p></div>
+    </section>
+
     <section>
         <div class="card" id="baslaEkrani">
             <h2>Yolculuğa başla</h2>
@@ -129,6 +146,7 @@
             await api("/api/yolculuk/bitir", { method: "POST", body: JSON.stringify({ durak_adi: durak, yogunluk_skoru: Number(document.getElementById("inisYogunlukSkoru").value) }) });
             document.getElementById("inisDuragi").value = "";
             await aktifYolculuguYukle();
+            await yogunlukGrafiginiYukle();
             mesajGoster("mesajBasla", "Yolculuk kaydedildi.");
         } catch (error) { mesajGoster("mesajBitir", error.message, true); }
     }
@@ -144,6 +162,35 @@
         const span = document.createElement("span");
         span.textContent = metin || "";
         return span.innerHTML;
+    }
+
+    function yogunlukRengi(puan) {
+        if (puan <= 3) return "#27ae60";
+        if (puan <= 6) return "#e3b341";
+        if (puan <= 8) return "#e67e22";
+        return "#c0392b";
+    }
+
+    function yogunlukEtiketi(puan) {
+        if (puan <= 3) return "Rahat";
+        if (puan <= 6) return "Orta";
+        if (puan <= 8) return "Yoğun";
+        return "Aşırı yoğun";
+    }
+
+    async function yogunlukGrafiginiYukle() {
+        const veriler = await api("/api/istatistikler/hat-yogunluklari");
+        const alan = document.getElementById("yogunlukGrafigi");
+        if (!veriler.length) {
+            alan.innerHTML = '<p class="bos">Grafik için henüz tamamlanmış yolculuk yok.</p>';
+            return;
+        }
+        alan.innerHTML = veriler.map(veri => {
+            const puan = Number(veri.ortalama_yogunluk);
+            const genislik = Math.max(0, Math.min(100, puan / 9 * 100));
+            const sayiMetni = veri.yolculuk_sayisi === 1 ? "1 yolculuk" : `${veri.yolculuk_sayisi} yolculuk`;
+            return `<div class="bar-satiri"><div class="bar-hat">${guvenliMetin(veri.hat_kodu)}</div><div class="bar-zemin" title="${puan.toFixed(1)} / 9"><div class="bar-dolgu" style="width:${genislik}%;background:${yogunlukRengi(puan)}"></div></div><div class="bar-deger"><strong>${puan.toFixed(1)} / 9</strong> · ${yogunlukEtiketi(puan)}<br>${sayiMetni}</div></div>`;
+        }).join("");
     }
 
     async function paylasimlariYukle() {
@@ -169,7 +216,7 @@
         try {
             const ben = await api("/api/auth/ben");
             document.getElementById("kullaniciAdi").textContent = `@${ben.kullanici_adi}`;
-            await Promise.all([aktifYolculuguYukle(), paylasimlariYukle()]);
+            await Promise.all([aktifYolculuguYukle(), yogunlukGrafiginiYukle(), paylasimlariYukle()]);
         } catch (error) { if (token) alert(error.message); }
     })();
 </script>

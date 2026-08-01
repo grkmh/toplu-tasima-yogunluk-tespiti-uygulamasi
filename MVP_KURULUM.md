@@ -16,6 +16,10 @@ uvicorn app.main:app --reload --port 8001
 Ardından `http://127.0.0.1:8001` adresini açın. Önce kullanıcı oluşturun, sonra
 uygulamada yolculuk kaydı ve fotoğraf paylaşımını deneyin.
 
+Tamamlanan yolculukların biniş ve iniş yoğunluğu ortalaması alınır. Uygulamanın
+üstündeki grafik, bu puanların hat bazında tüm zamanlar ortalamasını ve kaç
+yolculuktan hesaplandığını gösterir. Yeni bir yolculuk bitince grafik yenilenir.
+
 ## Veriler nerede?
 
 - Kullanıcılar, yolculuklar ve paylaşım bilgileri: `rotaradar_mvp.db`

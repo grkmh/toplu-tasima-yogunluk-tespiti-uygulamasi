@@ -7,6 +7,7 @@ from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, Upload
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from PIL import Image, ImageOps, UnidentifiedImageError
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -141,6 +142,33 @@ def yogunluk_ozeti(db: Session = Depends(get_db)):
     return db.query(models.YolculukKaydi).filter(
         models.YolculukKaydi.kayit_zamani >= sinir
     ).all()
+
+
+@app.get("/api/istatistikler/hat-yogunluklari")
+def hat_yogunluklari(
+    db: Session = Depends(get_db),
+    _kullanici: models.Kullanici = Depends(aktif_kullanici),
+):
+    """Tamamlanmış tüm yolculukların hat bazındaki yoğunluk ortalaması."""
+    satirlar = (
+        db.query(
+            models.YolculukKaydi.hat_kodu,
+            func.avg(models.YolculukKaydi.yolculuk_ortalama_skoru),
+            func.count(models.YolculukKaydi.yolculuk_id),
+        )
+        .group_by(models.YolculukKaydi.hat_kodu)
+        .order_by(func.avg(models.YolculukKaydi.yolculuk_ortalama_skoru).desc())
+        .all()
+    )
+
+    return [
+        {
+            "hat_kodu": hat_kodu,
+            "ortalama_yogunluk": round(float(ortalama), 1),
+            "yolculuk_sayisi": yolculuk_sayisi,
+        }
+        for hat_kodu, ortalama, yolculuk_sayisi in satirlar
+    ]
 
 
 @app.post("/api/paylasim", status_code=201)
