@@ -121,3 +121,36 @@ Scrum Master eşliğinde ekibimizin süreçlerini iyileştirmek için yaptığı
 
 <img width="1499" height="463" alt="Ekran görüntüsü 2026-07-19 190259" src="https://github.com/user-attachments/assets/9ecbaa9e-800e-4e1e-8e27-869e561b8301" />
 
+
+Sprint 2 Raporu
+Bu bölüm, takımımızın Sprint 2 boyunca yürüttüğü Çevik (Agile) süreçlerin, toplantı çıktılarının ve ürün ilerleyişinin özetini içermektedir.
+
+1. Backlog Düzeni ve Story Seçimleri
+Sprint planlama toplantımızda proje hedeflerimize uygun olarak seçtiğimiz kullanıcı hikayeleri (user stories) ve Backlog düzenimiz aşağıda yer almaktadır. İş kalemleri efor ve öncelik sırasına göre değerlendirilerek sprinte dahil edilmiştir.
+<img width="1571" height="840" alt="image" src="https://github.com/user-attachments/assets/199d60d3-2c59-4ecb-9f76-e5d126d985b0" />
+
+
+2. Daily Scrum
+Sprint boyunca ekip üyeleri olarak senkronizasyonu sağlamak, güncel ilerlemeyi paylaşmak ve olası engelleri (blocker) tespit etmek amacıyla yürüttüğümüz Daily Scrum (Günlük Koordinasyon) akışımızdan bir kesit:
+
+<img width="945" height="2048" alt="WhatsApp Image 2026-08-02 at 21 34 05" src="https://github.com/user-attachments/assets/117bd06c-ed0c-409d-868b-a26b6c272fb5" />
+
+
+3. Sprint Board (Aktif Sprint Panosu)
+<img width="1610" height="918" alt="image" src="https://github.com/user-attachments/assets/9d89ade2-e186-49d3-9c34-38aa86e9ddfb" />
+
+
+
+4. Ürün Durumu
+Bu sprint sonunda ürünümüzün geldiği son nokta. Geliştirilen özelliklerin sisteme entegre edilmiş, çalışan güncel hali:
+<img width="961" height="620" alt="image" src="https://github.com/user-attachments/assets/bc398c03-6f92-4262-a14b-c1af8a6ea78f" />
+
+5. Sprint Review (Gözden Geçirme)
+Ekip üyelerinin azlığı ve zaman kısıtlamasından kaynaklı ürün istenilen noktaya getirilemedi. Ama geliştirilmeye müsait bir proje.
+
+6. Sprint Retrospective (Geçmişe Dönük Değerlendirme)
+Proje fikir açından özgün bir proje. Zaman planlama eksikliğinden istenilen düzeye getirilemedi. 
+
+
+
+
